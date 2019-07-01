@@ -159,3 +159,59 @@ class Dump():
 
                 if (atom_count == self.natoms):
                     atoms_flag = 0
+        
+    def write_xyz(self,atom_dict,box_params,translate,fr_count):
+        
+        if (fr_count == 1):
+            of1 = open('output.xyz','w')
+        else:
+            of1 = open('output.xyz','a')
+        
+        of1.write('%d\n'%(self.natoms))
+        of1.write('%f %f '%(box_params['xlo'],box_params['xhi']))
+        of1.write('%f %f '%(box_params['ylo'],box_params['yhi']))
+        of1.write('%f %f '%(box_params['zlo'],box_params['zhi']))
+        of1.write('90 90 90\n')
+
+        for key in atom_dict:
+            of1.write('%s '%(atom_dict[key].names[1]))
+            of1.write('%f '%(atom_dict[key].coordinates[0]))
+            of1.write('%f '%(atom_dict[key].coordinates[1]))
+            of1.write('%f\n'%(atom_dict[key].coordinates[2]))
+
+        of1.close()
+
+    def translate(self,translate,atom_dict):
+
+        #Following set of equations are valid only for orthogonal boxes
+        #Needs to updated in the future to take into account non-orthogonality
+        
+        lx = box_params['xhi'] - box_params['xlo']
+        ly = box_params['yhi'] - box_params['ylo']
+        lz = box_params['zhi'] - box_params['zlo']
+
+        
+        #Check for mapping in x,y and z directions
+        #For each direction, update atom coordinates first and then box parameters. 
+        if (translate[0] == 1):
+            for key in atom_dic:
+                if (atom_dict[key].coordinates[0] > box_params['xlo']+lx/2.0):
+                    atpm_dict[key].coordinates[0] = atom_dict[key].coordinates[0] + lx
+            box_params['xlo'] = box_params['xlo'] + lx/2.0
+            box_params['xhi'] = box_params['xhi'] + lx/2.0
+
+        if (translate[1] == 1):
+            for key in atom_dic:
+                if (atom_dict[key].coordinates[1] > box_params['ylo']+ly/2.0):
+                    atom_dict[key].coordinates[1] = atom_dict[key].coordinates[1] + ly
+            box_params['ylo'] = box_params['ylo'] + ly/2.0
+            box_params['yhi'] = box_params['yhi'] + ly/2.0
+
+        if (translate[1] == 2):
+            for key in atom_dic:
+                if (atom_dict[key].coordinates[2] > box_params['zlo']+lz/2.0):
+                    atom_dict[key].coordinates[2] = atom_dict[key].coordinates[2] + lz
+            box_params['zlo'] = box_params['zlo'] + lz/2.0
+            box_params['zhi'] = box_params['zhi'] + lz/2.0
+        
+        

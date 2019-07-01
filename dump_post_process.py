@@ -1,9 +1,17 @@
 from classes import Atom
 from classes import Dump
+import os.path
+import sys
 
 dump_file_name = 'dump.airebo_stretch'
 at_names = ['C','H1','H']
 pos_list = ['id','type','x','y','z']
+translate = [0,0,0] #will translate/move the atoms across periodic boundaries by input numer
+                    # 0 means no translation/movement
+
+if not os.path.isfile(dump_file_name):
+    print ('File not found')
+    sys.exit()
 
 d1 = Dump(filename = 'dump.airebo_stretch')
 d1.find_number_of_frames()
@@ -26,6 +34,11 @@ with open(dump_file_name,'r') as if1:
             box_param = {}
 
             d1.parse_dump_frame(data_lines,atom_dict,box_param,at_names)
+            
+            if (sum(translate) != 0):
+                d1.translate(translate,atom_dict)
+            
+            d1.write_xyz(atom_dict,box_param,translate,frame_count)
 
             data_lines = []
 
@@ -34,6 +47,12 @@ with open(dump_file_name,'r') as if1:
             print ('Finished reading frame %d'%(frame_count))
             
             d1.parse_dump_frame(data_lines,atom_dict,box_param,at_names)
+
+            if (sum(translate) != 0):
+                d1.translate(translate,atom_dict)
+            
+            d1.write_xyz(atom_dict,box_param,translate,frame_count)
+            
             data_lines = []
 
         
