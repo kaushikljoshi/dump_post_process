@@ -1,0 +1,3 @@
+This python scripts read lammps dump file and post processes dump file in different ways.
+Currently, it can do following operations:
+1. read and parse dump file
