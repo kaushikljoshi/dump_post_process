@@ -6,7 +6,7 @@ import sys
 dump_file_name = 'dump.airebo_stretch'
 at_names = ['C','H1','H']
 pos_list = ['id','type','x','y','z']
-translate = [0,0,0] #will translate/move the atoms across periodic boundaries by input numer
+translate = [1,1,1] #will translate/move the atoms across periodic boundaries by input numer
                     # 0 means no translation/movement
 
 if not os.path.isfile(dump_file_name):
@@ -36,11 +36,13 @@ with open(dump_file_name,'r') as if1:
             d1.parse_dump_frame(data_lines,atom_dict,box_param,at_names)
             
             if (sum(translate) != 0):
-                d1.translate(translate,atom_dict)
+                d1.translate(translate,atom_dict,box_param)
             
             d1.write_xyz(atom_dict,box_param,translate,frame_count)
 
             data_lines = []
+            atom_dict = {}
+            box_param = {}
 
         if (frame_count == d1.nframes and lines == d1.nlines):
             frame_count = frame_count + 1
@@ -49,10 +51,12 @@ with open(dump_file_name,'r') as if1:
             d1.parse_dump_frame(data_lines,atom_dict,box_param,at_names)
 
             if (sum(translate) != 0):
-                d1.translate(translate,atom_dict)
+                d1.translate(translate,atom_dict,box_param)
             
             d1.write_xyz(atom_dict,box_param,translate,frame_count)
             
             data_lines = []
+            atom_dict = {}
+            box_param = {}
 
         
